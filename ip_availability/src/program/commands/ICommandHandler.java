@@ -1,6 +1,6 @@
 package program.commands;
 
-public interface CommandHandler 
+public interface ICommandHandler 
 {
 	public boolean execute(String[] args);
 }

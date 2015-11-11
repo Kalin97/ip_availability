@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class ConsoleIO implements DataIO 
 {
 	Scanner in;
-	
+
 	public ConsoleIO()
 	{
 		in = new Scanner(System.in);
@@ -27,5 +27,4 @@ public class ConsoleIO implements DataIO
 	public void close() {
 		in.close();
 	}
-
 }

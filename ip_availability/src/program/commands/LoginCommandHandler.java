@@ -1,24 +1,23 @@
 package program.commands;
 
 import program.Users;
-import program.input.DataIO;
 
-public class LoginCommandHandler implements CommandHandler 
+public class LoginCommandHandler implements ICommandHandler 
 {
-	DataIO stream;
+	OnResultCommandEvent callback;
 	Users users;
 	
-	public LoginCommandHandler(DataIO stream, Users users)
+	public LoginCommandHandler(OnResultCommandEvent callback, Users users)
 	{
-		this.stream = stream;
+		this.callback = callback;
 		this.users  = users;
 	}
 	
 	@Override
-	public boolean execute(String[] args) {
-		
+	public boolean execute(String[] args) 
+	{
 		users.StartSession(args[0]);
-		stream.output("ok");
+		callback.OnResultEvent("ok");
 		
 		return true;
 	}

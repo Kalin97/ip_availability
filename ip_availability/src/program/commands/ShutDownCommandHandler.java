@@ -2,7 +2,7 @@ package program.commands;
 
 import java.util.concurrent.Callable;
 
-public class ShutDownCommandHandler implements CommandHandler 
+public class ShutDownCommandHandler implements ICommandHandler 
 {
 	Callable<?> callback;
 	

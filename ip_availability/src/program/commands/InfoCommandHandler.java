@@ -1,16 +1,15 @@
 package program.commands;
 
 import program.Users;
-import program.input.DataIO;
 
-public class InfoCommandHandler implements CommandHandler 
+public class InfoCommandHandler implements ICommandHandler 
 {
-	DataIO stream;
+	OnResultCommandEvent callback;
 	Users  users;
 	
-	public InfoCommandHandler(DataIO stream, Users users) 
+	public InfoCommandHandler(OnResultCommandEvent callback, Users users) 
 	{
-		this.stream = stream;
+		this.callback = callback;
 		this.users  = users;
 	}
 
@@ -19,10 +18,13 @@ public class InfoCommandHandler implements CommandHandler
 	{
 		if(users.UserLoggedIn(args[0]))
 		{
-			stream.output("ok" + ":");
-			stream.output(args[1] + ":");
-			stream.output(users.UserLoggedIn(args[1]) + ":");
-			stream.output("" + users.GetTotalActiveSession(args[1]));
+			String result = "";
+			result += "ok" + ":";
+			result += args[1] + ":";
+			result += users.UserLoggedIn(args[1]) + ":";
+			result += "" + users.GetTotalActiveSession(args[1]);
+			
+			callback.OnResultEvent(result);
 			
 			return true;
 		}

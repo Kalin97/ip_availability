@@ -1,16 +1,15 @@
 package program.commands;
 
 import program.Users;
-import program.input.DataIO;
 
-public class LogoutCommandHandler implements CommandHandler 
+public class LogoutCommandHandler implements ICommandHandler 
 {
-	DataIO stream;
+	OnResultCommandEvent callback;
 	Users  users;
 	
-	public LogoutCommandHandler(DataIO stream, Users users)
+	public LogoutCommandHandler(OnResultCommandEvent callback, Users users)
 	{
-		this.stream = stream;
+		this.callback = callback;
 		this.users  = users;
 	}
 	
@@ -20,7 +19,7 @@ public class LogoutCommandHandler implements CommandHandler
 		if(users.UserLoggedIn(args[0]))
 		{
 			users.EndSession(args[0]);
-			stream.output("ok");
+			callback.OnResultEvent("ok");
 			
 			return true;
 		}

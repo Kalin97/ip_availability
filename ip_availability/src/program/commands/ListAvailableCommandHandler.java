@@ -1,16 +1,15 @@
 package program.commands;
 
 import program.Users;
-import program.input.DataIO;
 
-public class ListAvailableCommandHandler implements CommandHandler 
+public class ListAvailableCommandHandler implements ICommandHandler 
 {
-	DataIO stream;
+	OnResultCommandEvent callback;
 	Users  users;
 	
-	public ListAvailableCommandHandler(DataIO stream, Users users) 
+	public ListAvailableCommandHandler(OnResultCommandEvent callback, Users users) 
 	{
-		this.stream = stream;
+		this.callback = callback;
 		this.users  = users;
 	}
 
@@ -28,7 +27,7 @@ public class ListAvailableCommandHandler implements CommandHandler
 				userString += curretUser;
 			}
 
-			stream.output("ok" + userString);
+			callback.OnResultEvent("ok" + userString);
 			
 			return true;
 		}
