@@ -39,6 +39,8 @@ public class SocketServer implements Server
 			
 			startSession(client);
 		}
+		
+		stopServer();
 	}
 
 	private Socket waitForClient() throws IOException

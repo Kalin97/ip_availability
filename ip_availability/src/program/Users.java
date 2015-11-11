@@ -1,8 +1,10 @@
 package program;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 
 public class Users 
 {
@@ -53,15 +55,21 @@ public class Users
 		return users.containsKey(name) && users.get(name).UserLoggedIn();
 	}
 	
-	public String[] GetActiveUsers()
+	public List<String> GetUnactiveUsers()
 	{
-		String[] result = new String[users.size()];
+		List<String> result = (List<String>) users.keySet()
+												.stream()
+												.filter(p -> !users.get(p).UserLoggedIn())
+												.collect(Collectors.toList());
+	
+		return result;
+	}
+	
+	public List<String> GetActiveUsers()
+	{
+		List<String> result = new LinkedList<String>();
 		
-		int index = 0;
-		for(String name : users.keySet())
-		{
-			result[index++] = name;
-		}
+		result.addAll(users.keySet());
 		
 		return result;
 	}

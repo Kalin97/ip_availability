@@ -4,15 +4,15 @@ import java.util.List;
 
 import program.Users;
 
-public class ListAvailableCommandHandler implements ICommandHandler 
+public class ListabsentCommandHandler implements ICommandHandler
 {
-	OnResultCommandEvent callback;
-	Users  users;
+	private Users users;
+	private OnResultCommandEvent callback;
 	
-	public ListAvailableCommandHandler(OnResultCommandEvent callback, Users users) 
+	public ListabsentCommandHandler(OnResultCommandEvent callback, Users users) 
 	{
+		this.users = users;
 		this.callback = callback;
-		this.users  = users;
 	}
 
 	@Override
@@ -20,7 +20,7 @@ public class ListAvailableCommandHandler implements ICommandHandler
 	{
 		if(users.UserLoggedIn(args[0]))
 		{
-			List<String> activeUsersNames = users.GetActiveUsers();
+			List<String> activeUsersNames = users.GetUnactiveUsers();
 			String userString = "";
 			
 			for(String curretUser : activeUsersNames)
@@ -36,4 +36,5 @@ public class ListAvailableCommandHandler implements ICommandHandler
 		
 		return false;
 	}
+
 }

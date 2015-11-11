@@ -34,7 +34,8 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 		commands.put("logout", new LogoutCommandHandler(this, users));
 		commands.put("info", new InfoCommandHandler(this, users));
 		commands.put("listavailable", new ListAvailableCommandHandler(this, users));
-
+		commands.put("listabsent", new ListabsentCommandHandler(this, users));
+		
 		Callable<Void> predicate = new Callable<Void>()
 		{ 
 			public Void call() 
