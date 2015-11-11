@@ -2,18 +2,19 @@ package program;
 
 import java.io.IOException;
 
-import program.commands.LogActivityCommandExecuter;
 import program.sockets.SocketServer;
+import program.storage.IStorage;
+import program.storage.InRamStorage;
 
 public class Main 
 {
 	public static void main(String[] args)
 	{
-		ICommandExecuter commands = new LogActivityCommandExecuter();
+		IStorage storage = new InRamStorage();
 		
 		try 
 		{
-			final Server socketServer = new SocketServer(27015, commands);
+			final Server socketServer = new SocketServer(27015, storage);
 			
 			socketServer.startServer();
 			socketServer.stopServer();

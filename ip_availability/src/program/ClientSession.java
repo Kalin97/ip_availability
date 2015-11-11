@@ -3,7 +3,7 @@ package program;
 import java.io.IOException;
 import program.input.DataIO;
 
-public class ClientSession
+public class ClientSession implements Runnable
 {
 	DataIO stream;
 	Server server;
@@ -16,7 +16,7 @@ public class ClientSession
 		this.commandExecuter = commandExecuter;
 	}
 	
-	public void run() throws IOException
+	public void run()
 	{
 		do
 		{
@@ -30,7 +30,14 @@ public class ClientSession
 			
 		} while(commandExecuter.isActive());
 		
-		close();
+		try 
+		{
+			server.OnSessionEnd(this);
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void close() throws IOException

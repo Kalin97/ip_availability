@@ -1,26 +1,49 @@
 package program.commands;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import program.ICommandExecuter;
 import program.Users;
+import program.storage.IStorage;
 
 public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCommandEvent
 {
+	private Map<String, ICommandHandler> commands;
 	private boolean isActive;
 	private boolean hasOutput;
+	private Users users;
 	private String output;
 	
-	final private Users users;
-	
-	public LogActivityCommandExecuter()
+	public LogActivityCommandExecuter(IStorage data)
 	{
+		users = data.GetUsers();
+		initCommands();
 		isActive = true;
 		hasOutput = false;
-		users = new Users();
+	}
+	
+	private void initCommands()
+	{
+		commands = new HashMap<String, ICommandHandler>();
+		commands.put("login", new LoginCommandHandler(this, users));
+		commands.put("logout", new LogoutCommandHandler(this, users));
+		commands.put("info", new InfoCommandHandler(this, users));
+		commands.put("listavailable", new ListAvailableCommandHandler(this, users));
+
+		Callable<Void> predicate = new Callable<Void>()
+		{ 
+			public Void call() 
+			{ 
+				changeActiveState(false);
+				return null;
+			} 
+		};
+		commands.put("shutdown", new ShutDownCommandHandler(predicate));
 	}
 	
 	public void changeActiveState(boolean state)
@@ -54,46 +77,29 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 	}
 	
 	@Override
-	public boolean execute(String command) 
+	public boolean execute(String input) 
 	{
-		ICommandHandler handler = SetHandler(command);
-		handler.execute(GetParams(command));
+		ICommandHandler handler = getCommand(input);
+		handler.execute(getParams(input));
 		
 		return true;
 	}
 	
-	private ICommandHandler SetHandler(String input)
+	private ICommandHandler getCommand(String input)
 	{
 		String command = input.split(":")[1];
 		
-		switch(command)
+		if(commands.containsKey(command))
 		{
-		case "login": 
-			return new LoginCommandHandler(this, users);
-		case "logout":
-			return new LogoutCommandHandler(this, users);
-		case "info":
-			return new InfoCommandHandler(this, users);
-		case "listavailable":
-			return new ListAvailableCommandHandler(this, users);
-		case "shutdown":
-			Callable<Void> predicate = new Callable<Void>()
-			{ 
-				public Void call() 
-				{ 
-					changeActiveState(false);
-					return null;
-				} 
-			};
-			return new ShutDownCommandHandler(predicate);
+			return commands.get(command);
 		}
-		
+
 		OnResultEvent("error:unknowncommand");
 		
 		return null;
 	}
 	
-	private String[] GetParams(String input) {
+	private String[] getParams(String input) {
 		
 		String[] parts = input.split(":");
 		
