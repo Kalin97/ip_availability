@@ -30,6 +30,7 @@ public class ClientSession implements Client, Runnable
 		{}
 		finally
 		{
+			commandExecuter.Close();
 			stopSession();
 		}
 	}

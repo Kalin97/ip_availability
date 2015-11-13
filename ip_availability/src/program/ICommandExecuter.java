@@ -6,4 +6,5 @@ public interface ICommandExecuter
 	public boolean isActive();
 	public boolean hasOutput();
 	public String getOutput();
+	public void Close();
 }

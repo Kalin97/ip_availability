@@ -45,8 +45,6 @@ public class SocketServer implements Server
 			catch (Exception e) 
 			{}
 		}
-		
-		stopServer();
 	}
 
 	private Socket waitForClient() throws IOException
@@ -72,6 +70,11 @@ public class SocketServer implements Server
 
 	public synchronized void stopServer() throws IOException
 	{
+		if(!isServerRunning)
+		{
+			throw new IllegalStateException("Not running");		
+		}
+		
 		isServerRunning = false;
 		
 		for(ClientSession session : activeSessions)

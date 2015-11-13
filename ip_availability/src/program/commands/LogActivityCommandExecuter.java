@@ -165,4 +165,10 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 			users.EndSession(currentUser);
 		}
 	}
+
+	@Override
+	public void Close() 
+	{
+		OnLogout();
+	}
 }
