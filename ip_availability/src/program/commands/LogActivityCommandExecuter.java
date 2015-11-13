@@ -111,7 +111,7 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 			return false;
 		}
 		
-		if(!IsUserLoggedIn() && command != "login")
+		if(!IsUserLoggedIn() && !command.equals("login"))
 		{
 			OnResultEvent("error:notlogged");
 			
