@@ -24,10 +24,8 @@ public class UserInfo
 	public void StartSession(Client clientArg, Server server) throws IOException
 	{
 		numberActiveSessions++;
-		System.out.println("start session");
 		if(client != null && client != clientArg)
 		{
-			System.out.println("end previous client");
 			server.OnSessionEnd(client);
 		}
 		

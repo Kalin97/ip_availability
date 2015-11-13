@@ -24,18 +24,7 @@ public class ClientSession implements Client, Runnable
 	{
 		try 
 		{
-			do
-			{
-				String command = stream.input();
-				commandExecuter.execute(command);
-				
-				if(commandExecuter.hasOutput())
-				{
-					stream.output(commandExecuter.getOutput());
-				}
-				
-			} while(commandExecuter.isActive());
-		
+			HandleInput();
 		}
 		catch (Exception e) 
 		{}
@@ -44,13 +33,29 @@ public class ClientSession implements Client, Runnable
 			stopSession();
 		}
 	}
+
+	private void HandleInput() 
+	{
+		do
+		{
+			String command = stream.input();
+			commandExecuter.execute(command);
+			
+			if(commandExecuter.hasOutput())
+			{
+				stream.output(commandExecuter.getOutput());
+			}
+		} while(commandExecuter.isActive());
+	}
 	
 	public void stopSession()
 	{
-		try {
+		try 
+		{
 			server.OnSessionEnd(this);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 	}

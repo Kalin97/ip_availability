@@ -34,8 +34,8 @@ public class SocketIO implements DataIO
 	@Override
 	public void close() throws IOException 
 	{
+		stream.close();
 		in.close();
 		out.close();
-		stream.close();
 	}
 }
