@@ -70,27 +70,22 @@ public class SocketServer implements Server
 
 	public synchronized void stopServer() throws IOException
 	{
-		if(!isServerRunning)
-		{
-			throw new IllegalStateException("Not running");		
-		}
-		
 		isServerRunning = false;
 		
 		for(ClientSession session : activeSessions)
 		{
-			endSession(session);
+			EndSession(session);
 		}
 		
 		serverSocket.close();
 	}
 	
-	public synchronized void OnSessionEnd(Client session) throws IOException
+	public void OnSessionEnd(Client session) throws IOException
 	{
-		endSession(session);
+		EndSession(session);
 	}
 	
-	private synchronized void endSession(Client session) throws IOException
+	private synchronized void EndSession(Client session) throws IOException
 	{
 		session.close();
 		activeSessions.remove(session);

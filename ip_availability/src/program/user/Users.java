@@ -14,18 +14,18 @@ import program.Server;
 
 public class Users 
 {
-	private Map<String, UserInfo> users;
+	private Map<String, User> users;
 	
 	public Users()
 	{
-		users = Collections.synchronizedMap(new HashMap<String, UserInfo>());
+		users = Collections.synchronizedMap(new HashMap<String, User>());
 	}
 
 	public void StartSession(String name, Client client, Server server) throws IOException 
 	{
 		if(!users.containsKey(name))
 		{
-			users.put(name, new UserInfo());
+			users.put(name, new User());
 		}
 
 		users.get(name).StartSession(client, server);
@@ -46,12 +46,7 @@ public class Users
 	
 	public int GetTotalActiveSession(String name) 
 	{
-		if(SessionExist(name))
-		{
-			return users.get(name).NumberActiveSessions();
-		}
-
-		return 0;
+		return users.get(name).NumberActiveSessions();
 	}
 
 	public boolean SessionExist(String name)
@@ -78,7 +73,7 @@ public class Users
 		return result;
 	}
 	
-	public UserInfo GetUserInfo(String userName)
+	public User GetUserInfo(String userName)
 	{
 		if(!users.containsKey(userName))
 		{
@@ -88,4 +83,15 @@ public class Users
 		return users.get(userName);
 	}
 	
+	public String UserSessionActivity(String user, String separator)
+	{
+		User info = GetUserInfo(user);
+		
+		if(info != null)
+		{
+			return info.UserLoginSessions(separator);
+		}	
+		
+		return null;
+	}
 }

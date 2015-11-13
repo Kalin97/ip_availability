@@ -8,30 +8,44 @@ import program.user.Users;
 
 public class LoginCommandHandler implements ICommandHandler 
 {
-	private OnResultCommandEvent callback;
+	private LogActivityCommandExecuter executer;
 	private Users users;
 	private Client client;
 	private Server server;
 	
-	public LoginCommandHandler(OnResultCommandEvent callback, Users users, Client client, Server server)
+	public LoginCommandHandler(LogActivityCommandExecuter executer, Users users, Client client, Server server)
 	{
+		this.executer = executer;
 		this.server = server;
 		this.client = client;
-		this.callback = callback;
 		this.users  = users;
 	}
 	
 	@Override
 	public boolean execute(String[] args) 
 	{
-		if(args.length == 0)
+		String user = GetUser(args);
+		
+		if(user == null)
 		{
 			return false;
 		}
 		
-		String user = args[0];
+		Login(user);
+
+		executer.OnResultEvent("ok");
 		
-		callback.OnLogout();
+		return true;
+	}
+
+	private void Login(String user) 
+	{
+		if(user.equals(executer.CurrentUser()))
+		{
+			return;
+		}
+		
+		executer.OnLogout();
 		
 		try 
 		{
@@ -40,9 +54,16 @@ public class LoginCommandHandler implements ICommandHandler
 		catch (IOException e) 
 		{}
 		
-		callback.OnLogin(user);
-		callback.OnResultEvent("ok");
+		executer.OnLogin(user);
+	}
+
+	private String GetUser(String[] args) 
+	{
+		if(args.length == 0)
+		{
+			return null;
+		}
 		
-		return true;
+		return args[0];
 	}
 }

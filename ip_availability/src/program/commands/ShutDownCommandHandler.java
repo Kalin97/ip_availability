@@ -1,25 +1,28 @@
 package program.commands;
 
-import java.util.concurrent.Callable;
+import java.io.IOException;
+
+import program.Server;
 
 public class ShutDownCommandHandler implements ICommandHandler 
 {
-	Callable<?> callback;
+	Server server;
 	
-	public ShutDownCommandHandler(Callable<?> callback)
+	public ShutDownCommandHandler(Server server)
 	{
-		this.callback = callback;
+		this.server = server;
 	}
 	
 	@Override
-	public boolean execute(String[] args) {
-
-		try {
-			callback.call();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+	public boolean execute(String[] args) 
+	{
+		try 
+		{
+			server.stopServer();
+		} 
+		catch (IOException e) 
+		{}
+	
 		return true;
 	}
 }

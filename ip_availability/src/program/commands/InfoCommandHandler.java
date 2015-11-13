@@ -16,11 +16,13 @@ public class InfoCommandHandler implements ICommandHandler
 	@Override
 	public boolean execute(String[] args) 
 	{
-		String result = "";
-		result += "ok" + ":";
-		result += args[0] + ":";
-		result += users.UserLoggedIn(args[0]) + ":";
-		result += "" + users.GetTotalActiveSession(args[0]);
+		String user = args[0];
+		
+		String result = "ok" + ":";
+		result += user + ":";
+		result += users.UserLoggedIn(user) + ":";
+		result += users.GetTotalActiveSession(user);
+		result += users.UserSessionActivity(user, ":");
 		
 		callback.OnResultEvent(result);
 		

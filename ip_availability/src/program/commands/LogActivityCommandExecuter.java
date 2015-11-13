@@ -1,12 +1,10 @@
 package program.commands;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import program.Client;
 import program.ICommandExecuter;
@@ -44,16 +42,7 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 		commands.put("info", new InfoCommandHandler(this, users));
 		commands.put("listavailable", new ListAvailableCommandHandler(this, users));
 		commands.put("listabsent", new ListabsentCommandHandler(this, users));
-		
-		Callable<Void> predicate = new Callable<Void>()
-		{ 
-			public Void call() throws IOException 
-			{ 
-				server.stopServer();
-				return null;
-			} 
-		};
-		commands.put("shutdown", new ShutDownCommandHandler(predicate));
+		commands.put("shutdown", new ShutDownCommandHandler(server));
 	}
 	
 	public void changeActiveState(boolean state)
@@ -146,6 +135,11 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 		return params.toArray(new String[params.size()]);
 	}
 
+	public String CurrentUser()
+	{
+		return currentUser;
+	}
+	
 	private boolean IsUserLoggedIn()
 	{
 		return currentUser != null;
