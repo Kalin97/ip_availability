@@ -29,13 +29,18 @@ public class LoginCommandHandler implements ICommandHandler
 			return false;
 		}
 		
+		String user = args[0];
+		
+		callback.OnLogout();
+		
 		try 
 		{
-			users.StartSession(args[0], client, server);
+			users.StartSession(user, client, server);
 		} 
 		catch (IOException e) 
 		{}
 		
+		callback.OnLogin(user);
 		callback.OnResultEvent("ok");
 		
 		return true;

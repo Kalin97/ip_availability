@@ -23,9 +23,11 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 	private String output;
 	private Server server;
 	private Client client;
+	private String currentUser;
 	
 	public LogActivityCommandExecuter(IStorage data, Server server, Client client)
 	{
+		currentUser = null;
 		this.client = client;
 		this.server = server;
 		users = data.GetUsers();
@@ -38,7 +40,7 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 	{
 		commands = new HashMap<String, ICommandHandler>();
 		commands.put("login", new LoginCommandHandler(this, users, client, server));
-		commands.put("logout", new LogoutCommandHandler(this, users));
+		commands.put("logout", new LogoutCommandHandler(this, users, client, server));
 		commands.put("info", new InfoCommandHandler(this, users));
 		commands.put("listavailable", new ListAvailableCommandHandler(this, users));
 		commands.put("listabsent", new ListabsentCommandHandler(this, users));
@@ -87,22 +89,45 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 	@Override
 	public boolean execute(String input) 
 	{
-		ICommandHandler handler = getCommand(input);
+		String command = ParseCommand(input);
+		ICommandHandler handler = getCommand(command);
+		
+		if(!Validation(command, handler))
+		{
+			return false;
+		}
+
+		handler.execute(getParams(input, 0));
+
+		return true;
+	}
+
+	private boolean Validation(String command, ICommandHandler handler) 
+	{
 		if(handler == null)
 		{
 			OnResultEvent("error:unknowncommand");
 			
 			return false;
 		}
-
-		handler.execute(getParams(input, 0));
+		
+		if(!IsUserLoggedIn() && command != "login")
+		{
+			OnResultEvent("error:notlogged");
+			
+			return false;
+		}
+		
 		return true;
 	}
 	
-	private ICommandHandler getCommand(String input)
+	private String ParseCommand(String input)
 	{
-		String command = input.split(":")[0];
-		
+		return input.split(":")[0];
+	}
+	
+	private ICommandHandler getCommand(String command)
+	{
 		if(commands.containsKey(command))
 		{
 			return commands.get(command);
@@ -119,5 +144,25 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 		params.remove(indexToRemove); 
 		
 		return params.toArray(new String[params.size()]);
+	}
+
+	private boolean IsUserLoggedIn()
+	{
+		return currentUser != null;
+	}
+	
+	@Override
+	public void OnLogin(String user) 
+	{
+		currentUser = user;
+	}
+
+	@Override
+	public void OnLogout() 
+	{
+		if(users.UserLoggedIn(currentUser))
+		{
+			users.EndSession(currentUser);
+		}
 	}
 }

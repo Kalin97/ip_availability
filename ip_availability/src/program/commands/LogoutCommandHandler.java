@@ -1,14 +1,22 @@
 package program.commands;
 
+import java.io.IOException;
+
+import program.Client;
+import program.Server;
 import program.user.Users;
 
 public class LogoutCommandHandler implements ICommandHandler 
 {
 	OnResultCommandEvent callback;
 	Users  users;
+	Client client;
+	Server server;
 	
-	public LogoutCommandHandler(OnResultCommandEvent callback, Users users)
+	public LogoutCommandHandler(OnResultCommandEvent callback, Users users, Client client, Server server)
 	{
+		this.server = server;
+		this.client = client;
 		this.callback = callback;
 		this.users  = users;
 	}
@@ -16,8 +24,17 @@ public class LogoutCommandHandler implements ICommandHandler
 	@Override
 	public boolean execute(String[] args) 
 	{
-		callback.OnResultEvent("ok");
-			
+		callback.OnLogout();
+
+		try 
+		{
+			server.OnSessionEnd(client);
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		
 		return true;
 	}
 

@@ -4,5 +4,5 @@ import java.io.IOException;
 
 public interface Client 
 {
-	void close() throws IOException;
+	public void close() throws IOException;
 }
