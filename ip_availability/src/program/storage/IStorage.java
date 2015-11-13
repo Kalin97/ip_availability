@@ -1,6 +1,6 @@
 package program.storage;
 
-import program.Users;
+import program.user.Users;
 
 public interface IStorage 
 {

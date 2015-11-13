@@ -2,7 +2,8 @@ package program.commands;
 
 import java.util.List;
 
-import program.Users;
+import program.user.Users;
+
 
 public class ListabsentCommandHandler implements ICommandHandler
 {
@@ -18,23 +19,18 @@ public class ListabsentCommandHandler implements ICommandHandler
 	@Override
 	public boolean execute(String[] args) 
 	{
-		if(users.UserLoggedIn(args[0]))
-		{
-			List<String> activeUsersNames = users.GetUnactiveUsers();
-			String userString = "";
-			
-			for(String curretUser : activeUsersNames)
-			{
-				userString += ":";
-				userString += curretUser;
-			}
-
-			callback.OnResultEvent("ok" + userString);
-			
-			return true;
-		}
+		List<String> activeUsersNames = users.GetUnactiveUsers();
+		String userString = "";
 		
-		return false;
+		for(String curretUser : activeUsersNames)
+		{
+			userString += ":";
+			userString += curretUser;
+		}
+
+		callback.OnResultEvent("ok" + userString);
+		
+		return true;
 	}
 
 }

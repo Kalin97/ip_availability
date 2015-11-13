@@ -1,5 +1,6 @@
 package program.commands;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -7,9 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import program.Client;
 import program.ICommandExecuter;
-import program.Users;
+import program.Server;
 import program.storage.IStorage;
+import program.user.Users;
 
 public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCommandEvent
 {
@@ -18,9 +21,13 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 	private boolean hasOutput;
 	private Users users;
 	private String output;
+	private Server server;
+	private Client client;
 	
-	public LogActivityCommandExecuter(IStorage data)
+	public LogActivityCommandExecuter(IStorage data, Server server, Client client)
 	{
+		this.client = client;
+		this.server = server;
 		users = data.GetUsers();
 		initCommands();
 		isActive = true;
@@ -30,7 +37,7 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 	private void initCommands()
 	{
 		commands = new HashMap<String, ICommandHandler>();
-		commands.put("login", new LoginCommandHandler(this, users));
+		commands.put("login", new LoginCommandHandler(this, users, client, server));
 		commands.put("logout", new LogoutCommandHandler(this, users));
 		commands.put("info", new InfoCommandHandler(this, users));
 		commands.put("listavailable", new ListAvailableCommandHandler(this, users));
@@ -38,9 +45,9 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 		
 		Callable<Void> predicate = new Callable<Void>()
 		{ 
-			public Void call() 
+			public Void call() throws IOException 
 			{ 
-				changeActiveState(false);
+				server.stopServer();
 				return null;
 			} 
 		};
@@ -81,31 +88,35 @@ public class LogActivityCommandExecuter implements ICommandExecuter, OnResultCom
 	public boolean execute(String input) 
 	{
 		ICommandHandler handler = getCommand(input);
-		handler.execute(getParams(input));
-		
+		if(handler == null)
+		{
+			OnResultEvent("error:unknowncommand");
+			
+			return false;
+		}
+
+		handler.execute(getParams(input, 0));
 		return true;
 	}
 	
 	private ICommandHandler getCommand(String input)
 	{
-		String command = input.split(":")[1];
+		String command = input.split(":")[0];
 		
 		if(commands.containsKey(command))
 		{
 			return commands.get(command);
 		}
-
-		OnResultEvent("error:unknowncommand");
 		
 		return null;
 	}
 	
-	private String[] getParams(String input) {
-		
+	private String[] getParams(String input, int indexToRemove) 
+	{
 		String[] parts = input.split(":");
 		
 		List<String> params = new LinkedList<String>(Arrays.asList(parts));
-		params.remove(1); 
+		params.remove(indexToRemove); 
 		
 		return params.toArray(new String[params.size()]);
 	}

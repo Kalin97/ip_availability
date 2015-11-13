@@ -1,10 +1,16 @@
-package program;
+package program.user;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import program.Client;
+import program.Server;
+
 
 public class Users 
 {
@@ -12,19 +18,17 @@ public class Users
 	
 	public Users()
 	{
-		users = new HashMap<String, UserInfo>();
+		users = Collections.synchronizedMap(new HashMap<String, UserInfo>());
 	}
 
-	public void StartSession(String name) 
+	public void StartSession(String name, Client client, Server server) throws IOException 
 	{
-		if(users.containsKey(name))
-		{
-			users.get(name).StartSession();
-		}
-		else
+		if(!users.containsKey(name))
 		{
 			users.put(name, new UserInfo());
 		}
+
+		users.get(name).StartSession(client, server);
 	}
 	
 	public void EndSession(String name)
@@ -72,6 +76,16 @@ public class Users
 		result.addAll(users.keySet());
 		
 		return result;
+	}
+	
+	public UserInfo GetUserInfo(String userName)
+	{
+		if(!users.containsKey(userName))
+		{
+			return null;
+		}
+		
+		return users.get(userName);
 	}
 	
 }

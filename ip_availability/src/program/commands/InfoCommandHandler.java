@@ -1,6 +1,6 @@
 package program.commands;
 
-import program.Users;
+import program.user.Users;
 
 public class InfoCommandHandler implements ICommandHandler 
 {
@@ -16,19 +16,14 @@ public class InfoCommandHandler implements ICommandHandler
 	@Override
 	public boolean execute(String[] args) 
 	{
-		if(users.UserLoggedIn(args[0]))
-		{
-			String result = "";
-			result += "ok" + ":";
-			result += args[1] + ":";
-			result += users.UserLoggedIn(args[1]) + ":";
-			result += "" + users.GetTotalActiveSession(args[1]);
-			
-			callback.OnResultEvent(result);
-			
-			return true;
-		}
-
-		return false;
+		String result = "";
+		result += "ok" + ":";
+		result += args[0] + ":";
+		result += users.UserLoggedIn(args[0]) + ":";
+		result += "" + users.GetTotalActiveSession(args[0]);
+		
+		callback.OnResultEvent(result);
+		
+		return true;
 	}
 }

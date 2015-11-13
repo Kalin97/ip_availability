@@ -1,15 +1,19 @@
-package program;
+package program.user;
+
+import java.io.IOException;
+
+import program.Client;
+import program.Server;
 
 public class UserInfo 
 {
 	private boolean activeSession;
 	private int numberActiveSessions;
+	private Client client;
 	
 	public UserInfo()
 	{
 		numberActiveSessions = 0;
-
-		StartSession();
 	}
 	
 	public boolean UserLoggedIn()
@@ -17,10 +21,17 @@ public class UserInfo
 		return activeSession;
 	}
 	
-	public void StartSession()
+	public void StartSession(Client clientArg, Server server) throws IOException
 	{
 		numberActiveSessions++;
+		System.out.println("start session");
+		if(client != null && client != clientArg)
+		{
+			System.out.println("end previous client");
+			server.OnSessionEnd(client);
+		}
 		
+		client = clientArg;
 		activeSession = true;
 	}
 	

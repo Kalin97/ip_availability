@@ -1,6 +1,6 @@
 package program.commands;
 
-import program.Users;
+import program.user.Users;
 
 public class LogoutCommandHandler implements ICommandHandler 
 {
@@ -16,15 +16,9 @@ public class LogoutCommandHandler implements ICommandHandler
 	@Override
 	public boolean execute(String[] args) 
 	{
-		if(users.UserLoggedIn(args[0]))
-		{
-			users.EndSession(args[0]);
-			callback.OnResultEvent("ok");
+		callback.OnResultEvent("ok");
 			
-			return true;
-		}
-		
-		return false;
+		return true;
 	}
 
 }

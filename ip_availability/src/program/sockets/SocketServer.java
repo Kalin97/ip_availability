@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import program.Client;
 import program.ClientSession;
 import program.ICommandExecuter;
 import program.Server;
@@ -35,9 +36,14 @@ public class SocketServer implements Server
 	{
 		while(serverRunning())
 		{
-			Socket client = waitForClient();
-			
-			startSession(client);
+			Socket client = null;
+			try 
+			{
+				client = waitForClient();
+				startSession(client);
+			} 
+			catch (Exception e) 
+			{}
 		}
 		
 		stopServer();
@@ -51,8 +57,9 @@ public class SocketServer implements Server
 	private void startSession(Socket client) throws IOException
 	{
 		DataIO stream = new SocketIO(client);
-		ICommandExecuter commandExecuter = new LogActivityCommandExecuter(data);
-		ClientSession clientSession = new ClientSession(this, stream, commandExecuter);
+		ClientSession clientSession = new ClientSession(this, stream);
+		ICommandExecuter commandExecuter = new LogActivityCommandExecuter(data, this, clientSession);
+		clientSession.SetCommandExecuter(commandExecuter);
 		
 		activeSessions.add(clientSession);
 		new Thread(clientSession).start();
@@ -75,12 +82,12 @@ public class SocketServer implements Server
 		serverSocket.close();
 	}
 	
-	public synchronized void OnSessionEnd(ClientSession session) throws IOException
+	public synchronized void OnSessionEnd(Client session) throws IOException
 	{
 		endSession(session);
 	}
 	
-	private synchronized void endSession(ClientSession session) throws IOException
+	private synchronized void endSession(Client session) throws IOException
 	{
 		session.close();
 		activeSessions.remove(session);

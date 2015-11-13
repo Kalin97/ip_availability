@@ -1,14 +1,22 @@
 package program.commands;
 
-import program.Users;
+import java.io.IOException;
+
+import program.Client;
+import program.Server;
+import program.user.Users;
 
 public class LoginCommandHandler implements ICommandHandler 
 {
-	OnResultCommandEvent callback;
-	Users users;
+	private OnResultCommandEvent callback;
+	private Users users;
+	private Client client;
+	private Server server;
 	
-	public LoginCommandHandler(OnResultCommandEvent callback, Users users)
+	public LoginCommandHandler(OnResultCommandEvent callback, Users users, Client client, Server server)
 	{
+		this.server = server;
+		this.client = client;
 		this.callback = callback;
 		this.users  = users;
 	}
@@ -16,7 +24,18 @@ public class LoginCommandHandler implements ICommandHandler
 	@Override
 	public boolean execute(String[] args) 
 	{
-		users.StartSession(args[0]);
+		if(args.length == 0)
+		{
+			return false;
+		}
+		
+		try 
+		{
+			users.StartSession(args[0], client, server);
+		} 
+		catch (IOException e) 
+		{}
+		
 		callback.OnResultEvent("ok");
 		
 		return true;
